@@ -66,28 +66,35 @@
           >Add Task</a
         >
         <div v-else class="add-card">
-          <div class="card mb-2">
-            <div class="card-body d-flex flex-column p-0">
-              <input
-                class="form-control border-0 mb-2"
-                placeholder="Title"
-                type="text"
-              />
-              <textarea
-                class="form-control border-0 small"
-                placeholder="Description"
-                rows="3"
-              ></textarea>
-            </div>
-          </div>
-          <div class="button-wrapper d-flex">
-            <button class="btn btn-primary me-2">Save</button>
-            <button
-              class="btn btn-outline-secondary"
-              @click="isCreating = !isCreating"
-            >
-              Cancel
-            </button>
+          <!-- Inside the .add-card div -->
+          <div class="add-card">
+            <form @submit.prevent="addTask">
+              <div class="card mb-2">
+                <div class="card-body d-flex flex-column p-0">
+                  <input
+                    class="form-control border-0 mb-2"
+                    placeholder="Title"
+                    type="text"
+                    v-model="newTask.title"
+                  />
+                  <textarea
+                    class="form-control border-0 small"
+                    placeholder="Description"
+                    rows="3"
+                    v-model="newTask.description"
+                  ></textarea>
+                </div>
+              </div>
+              <div class="button-wrapper d-flex">
+                <button class="btn btn-primary me-2" type="submit">Save</button>
+                <button
+                  class="btn btn-outline-secondary"
+                  @click="isCreating = !isCreating"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -147,6 +154,11 @@ export default {
         },
       ],
       selectedCategory: 'Harian',
+      newTask: {
+        // Properti untuk tugas baru
+        title: '',
+        description: '',
+      },
     }
   },
 
@@ -184,6 +196,27 @@ export default {
       this.$set(this.tasks, index, updatedTask)
     },
     // ...
+    addTask() {
+      // Validasi bahwa judul tugas tidak boleh kosong
+      if (this.newTask.title.trim() === '') {
+        return
+      }
+
+      // Tambahkan tugas baru ke dalam array tasks
+      this.tasks.push({
+        title: this.newTask.title,
+        description: this.newTask.description,
+        isDone: false,
+        category: this.selectedCategory,
+      })
+
+      // Reset form input
+      this.newTask.title = ''
+      this.newTask.description = ''
+
+      // Tutup form tambah tugas
+      this.isCreating = false
+    },
   },
 }
 </script>
